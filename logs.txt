@@ -1,0 +1,8 @@
+April 27, 1:25 am.
+
+I had mentioned nosql in the system design, but today I felt like building more than learning, so I decided to go ahead with sqlite. Tomorrow will upgrade this to postgres.
+
+Register, login, signup functionalities, plus CRUD functionalities for questions have been created.
+Create for Answers is also finished. Will quickly finish the Read, update, delete tomorrow. 
+
+I am feeling exhausted at the moment, and proper sleep should be prioritized over everything else, so I'm off.
