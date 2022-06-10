@@ -9,7 +9,9 @@ from rest_framework.response import Response
 
 class Register(APIView):
     def post(self, request):
+        print(request.data)
         username = request.data.get("username")
+        print("username: ", username)
         email = request.data.get("email")
         if User.objects.filter(Q(username=username) | Q(email=email)).exists():
             return Response({"message": "username or email is already in use"})

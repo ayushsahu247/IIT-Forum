@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from posts import serializers
 from posts.models import *
 from core.models import *
-from posts.serializers import QuestionSerializer
+from posts.serializers import QuestionSerializer, AnswerSerializer
 # Create your views here.
 
 class CreateQuestion(APIView):
@@ -52,3 +52,58 @@ class CreateAnswer(APIView):
             return Response({"message":f"New answer created - id {new_answer.id}"})
         else:
             return Response({"message":"Login to answer questions"})
+
+class GetAnswers(APIView):
+    def get(self, request, pk):
+        answers = Answer.objects.filter(question_object_id=pk)
+        returnable = []
+        for answer in answers:
+            returnable.append({"id":answer.id,
+            "answer":answer.text})
+        return Response({"data":returnable})
+
+class Upvote(APIView):
+    def post(self, request, model, pk):
+        if model.lower()=="question":
+            try:
+                question = Question.objects.get(id=pk)
+            except Question.DoesNotExist:
+                return Response({"message":"No question with given id exists."})
+            question.upvote_count+=1
+            question.save()
+            serializer = QuestionSerializer(question)
+            return Response(serializer.data)
+        elif model.lower()=="answer":
+            try:
+                answer = Answer.objects.get(id=pk)
+            except Answer.DoesNotExist:
+                return Response({"message":"No answer with given id exists"})
+            answer.upvote_count+=1
+            answer.save()
+            serializer = AnswerSerializer(question)
+            return Response(serializer.data)
+        else:
+            return Response({"message":"You can either upvote a question or an answer."})
+
+class Downvote(APIView):
+    def post(self, request, model, pk):
+        if model.lower()=="question":
+            try:
+                question = Question.objects.get(id=pk)
+            except Question.DoesNotExist:
+                return Response({"message":"No question with given id exists."})
+            question.upvote_count-=1
+            question.save()
+            serializer = QuestionSerializer(question)
+            return Response(serializer.data)
+        elif model.lower()=="answer":
+            try:
+                answer = Answer.objects.get(id=pk)
+            except Answer.DoesNotExist:
+                return Response({"message":"No answer with given id exists"})
+            answer.upvote_count-=1
+            answer.save()
+            serializer = AnswerSerializer(question)
+            return Response(serializer.data)
+        else:
+            return Response({"message":"You can either upvote a question or an answer."})
